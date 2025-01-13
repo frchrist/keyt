@@ -9,6 +9,8 @@ A static library for translating keyboard input from AZERTY to QWERTY layout, sp
 - Easy integration with QLineEdit widgets
 - Full test coverage
 - Supports both uppercase and lowercase characters
+- CMake installation support
+- CMake package configuration files
 
 ### Translation Examples
 
@@ -29,6 +31,8 @@ qwertyuiopasd    -> azertyuiopqsd
 
 ## Installation
 
+### Building from Source
+
 1. Clone the repository:
 ```bash
 git clone [repository-url]
@@ -42,9 +46,38 @@ cmake ..
 cmake --build .
 ```
 
-3. Run the tests:
+3. Run the tests (optional):
 ```bash
 ctest --output-on-failure
+```
+
+4. Install the library:
+```bash
+# On Unix-like systems (may require sudo)
+cmake --install .
+
+# On Windows with custom prefix
+cmake --install . --prefix C:/CustomPath
+```
+
+### Using as a Dependency in Your Project
+
+#### Method 1: Using find_package
+
+After installing the library, you can use it in your CMake project:
+
+```cmake
+find_package(KeyboardTranslator REQUIRED)
+target_link_libraries(YourTarget PRIVATE KeyboardTranslator::KeyboardTranslator)
+```
+
+#### Method 2: Using add_subdirectory
+
+If you have the library source code as part of your project:
+
+```cmake
+add_subdirectory(path/to/KeyboardTranslator)
+target_link_libraries(YourTarget PRIVATE KeyboardTranslator::KeyboardTranslator)
 ```
 
 ## Usage
@@ -54,7 +87,7 @@ ctest --output-on-failure
 ```cpp
 #include <QApplication>
 #include <QLineEdit>
-#include "KeyboardTranslator.h"
+#include <KeyboardTranslator/KeyboardTranslator.h>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -68,19 +101,31 @@ int main(int argc, char *argv[]) {
 }
 ```
 
-### CMake Integration
+### CMake Project Configuration
 
-Add to your project's CMakeLists.txt:
+Your project's CMakeLists.txt should look something like this:
 
 ```cmake
-add_subdirectory(path/to/KeyboardTranslator)
-target_link_libraries(YourTarget PRIVATE KeyboardTranslator)
+cmake_minimum_required(VERSION 3.16)
+project(YourProject)
+
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(KeyboardTranslator REQUIRED)
+
+add_executable(YourApp main.cpp)
+target_link_libraries(YourApp
+    PRIVATE
+        Qt6::Widgets
+        KeyboardTranslator::KeyboardTranslator
+)
 ```
 
 ## Project Structure
 
 ```
 KeyboardTranslator/
+├── cmake/
+│   └── KeyboardTranslatorConfig.cmake.in
 ├── include/
 │   └── KeyboardTranslator.h
 ├── src/
@@ -115,9 +160,9 @@ The library includes three test suites:
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+2. Create your feature branch (`git checkout -b feature/f1`)
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+4. Push to the branch (`git push origin feature/f1`)
 5. Open a Pull Request
 
 ## License
